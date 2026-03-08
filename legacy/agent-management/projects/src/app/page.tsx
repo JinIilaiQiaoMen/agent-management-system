@@ -1,0 +1,350 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import {
+  Plus,
+  MessageSquare,
+  FileText,
+  Users,
+  Briefcase,
+  ChevronRight,
+  ChevronDown,
+  Building2,
+  ArrowLeft,
+  Home,
+  Bot,
+} from "lucide-react";
+import AgentTree from "@/components/AgentTree";
+import AgentDialog from "@/components/AgentDialog";
+import TaskDialog from "@/components/TaskDialog";
+import TaskList from "@/components/TaskList";
+import ChatPanel from "@/components/ChatPanel";
+import KnowledgeBasePanel from "@/components/KnowledgeBasePanel";
+import AgentMonitorPanel from "@/components/AgentMonitorPanel";
+import ConversationBoxChat from "@/components/conversation-box-chat";
+import type { Agent, Task } from "@/storage/database";
+
+export default function Page() {
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [activeTab, setActiveTab] = useState("agents");
+  const [agentDialogOpen, setAgentDialogOpen] = useState(false);
+  const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+  const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  const loadAgents = async () => {
+    try {
+      const response = await fetch("/api/agents");
+      if (response.ok) {
+        const data = await response.json();
+        setAgents(data);
+      }
+    } catch (error) {
+      console.error("Failed to load agents:", error);
+    }
+  };
+
+  const loadTasks = async () => {
+    try {
+      const response = await fetch("/api/tasks");
+      if (response.ok) {
+        const data = await response.json();
+        setTasks(data);
+      }
+    } catch (error) {
+      console.error("Failed to load tasks:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadAgents();
+    loadTasks();
+  }, []);
+
+  const handleAgentSaved = () => {
+    loadAgents();
+    setAgentDialogOpen(false);
+    setEditingAgent(null);
+  };
+
+  const handleTaskCreated = () => {
+    loadTasks();
+    setTaskDialogOpen(false);
+  };
+
+  const handleAgentDeleted = () => {
+    loadAgents();
+    if (selectedAgent) {
+      setSelectedAgent(null);
+    }
+  };
+
+  const handleTaskSelected = (task: Task) => {
+    setSelectedTask(task);
+    if (task.assignedAgentId) {
+      const agent = agents.find((a) => a.id === task.assignedAgentId);
+      if (agent) {
+        setSelectedAgent(agent);
+        setActiveTab("chat");
+      }
+    }
+  };
+
+  const activeAgentsCount = agents.filter((a) => a.isActive).length;
+  const pendingTasksCount = tasks.filter((t) => t.status === "pending").length;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      {/* Header */}
+      <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-slate-900/80">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
+                <Building2 className="h-6 w-6" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                  公司智能体管理系统
+                </h1>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  CEO工作发布与智能分配平台
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-sm">
+                <Badge variant="secondary" className="gap-1">
+                  <Users className="h-3 w-3" />
+                  智能体: {activeAgentsCount}
+                </Badge>
+                <Badge variant="outline" className="gap-1">
+                  <Briefcase className="h-3 w-3" />
+                  待分配: {pendingTasksCount}
+                </Badge>
+              </div>
+              <Button onClick={() => setTaskDialogOpen(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                发布任务
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto">
+            <TabsTrigger value="agents" className="gap-2">
+              <Users className="h-4 w-4" />
+              智能体架构
+            </TabsTrigger>
+            <TabsTrigger value="tasks" className="gap-2">
+              <Briefcase className="h-4 w-4" />
+              任务管理
+            </TabsTrigger>
+            <TabsTrigger value="chat" className="gap-2">
+              <MessageSquare className="h-4 w-4" />
+              智能体对话
+            </TabsTrigger>
+            <TabsTrigger value="collaboration" className="gap-2">
+              <Bot className="h-4 w-4" />
+              多智能体协作
+            </TabsTrigger>
+            <TabsTrigger value="knowledge" className="gap-2">
+              <FileText className="h-4 w-4" />
+              知识库
+            </TabsTrigger>
+          </TabsList>
+
+          {/* 智能体架构 */}
+          <TabsContent value="agents" className="space-y-4">
+            <Card className="p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setActiveTab("agents")}
+                    className="gap-1"
+                  >
+                    <Home className="h-4 w-4" />
+                    返回首页
+                  </Button>
+                  <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
+                  <div>
+                    <h2 className="text-xl font-semibold">公司智能体架构</h2>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      管理公司各层级智能体，支持增删改查操作
+                    </p>
+                  </div>
+                </div>
+                <Button onClick={() => setAgentDialogOpen(true)} className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  添加智能体
+                </Button>
+              </div>
+              <AgentTree
+                agents={agents}
+                onAgentSelect={setSelectedAgent}
+                onAgentEdit={(agent) => {
+                  setEditingAgent(agent);
+                  setAgentDialogOpen(true);
+                }}
+                onAgentDeleted={handleAgentDeleted}
+              />
+            </Card>
+          </TabsContent>
+
+          {/* 任务管理 */}
+          <TabsContent value="tasks" className="space-y-4">
+            <Card className="p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setActiveTab("tasks")}
+                    className="gap-1"
+                  >
+                    <Home className="h-4 w-4" />
+                    返回首页
+                  </Button>
+                  <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
+                  <div>
+                    <h2 className="text-xl font-semibold">任务管理</h2>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      CEO发布任务并分配给对应职能的智能体
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <TaskList
+                tasks={tasks}
+                agents={agents}
+                onTaskSelect={handleTaskSelected}
+                onTaskUpdated={loadTasks}
+              />
+            </Card>
+
+            {/* 智能体监控面板 */}
+            {activeTab === "tasks" && (
+              <AgentMonitorPanel taskId={selectedTask?.id} />
+            )}
+          </TabsContent>
+
+          {/* 智能体对话 */}
+          <TabsContent value="chat" className="space-y-4">
+            <Card className="p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setActiveTab("chat")}
+                    className="gap-1"
+                  >
+                    <Home className="h-4 w-4" />
+                    返回首页
+                  </Button>
+                  <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
+                  <div>
+                    <h2 className="text-xl font-semibold">智能体对话</h2>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      与智能体进行对话交流，获取专业建议
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <ChatPanel
+                agents={agents}
+                selectedAgent={selectedAgent}
+                onAgentSelect={setSelectedAgent}
+                selectedTask={selectedTask}
+              />
+            </Card>
+          </TabsContent>
+
+          {/* 多智能体协作 */}
+          <TabsContent value="collaboration" className="space-y-4">
+            <Card className="p-6 h-[calc(100vh-200px)]">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setActiveTab("collaboration")}
+                    className="gap-1"
+                  >
+                    <Home className="h-4 w-4" />
+                    返回首页
+                  </Button>
+                  <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
+                  <div>
+                    <h2 className="text-xl font-semibold">多智能体协作</h2>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      创建对话盒子，让多个智能体协作完成任务
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="h-[calc(100%-80px)]">
+                <ConversationBoxChat />
+              </div>
+            </Card>
+          </TabsContent>
+
+          {/* 知识库 */}
+          <TabsContent value="knowledge" className="space-y-4">
+            <Card className="p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setActiveTab("knowledge")}
+                    className="gap-1"
+                  >
+                    <Home className="h-4 w-4" />
+                    返回首页
+                  </Button>
+                  <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
+                  <div>
+                    <h2 className="text-xl font-semibold">知识库管理</h2>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      管理通用知识库和智能体专属知识库
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <KnowledgeBasePanel agents={agents} />
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </main>
+
+      {/* Dialogs */}
+      <AgentDialog
+        open={agentDialogOpen}
+        onOpenChange={setAgentDialogOpen}
+        agent={editingAgent}
+        agents={agents}
+        onSaved={handleAgentSaved}
+      />
+
+      <TaskDialog
+        open={taskDialogOpen}
+        onOpenChange={setTaskDialogOpen}
+        agents={agents}
+        onCreated={handleTaskCreated}
+      />
+    </div>
+  );
+}

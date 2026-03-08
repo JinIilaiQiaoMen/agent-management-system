@@ -1,0 +1,231 @@
+// 微信客服 - 数据库模型
+
+generator client {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MessageStatus {
+  PENDING       // 待处理
+  PROCESSING    // 处理中
+  COMPLETED     // 已完成
+  FAILED        // 失败
+}
+
+enum MessageSource {
+  WECHAT         // 微信公众号
+  WORK_WECHAT    // 企业微信
+  MINIPROGRAM     // 微信小程序
+}
+
+enum ReplyType {
+  AUTO_REPLY      // 自动回复
+  AGENT_REPLY     // 客服人工
+  SYSTEM_REPLY    // 系统消息
+}
+
+model User {
+  id              String   @id @default(cuid())
+  wechatOpenId    String?  @unique
+  wechatUnionId   String?  @unique
+  name            String?
+  avatar          String?
+  companyId       String?
+  company         Company?  @relation(fields: [companyId])
+  messages        Message[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([wechatOpenId])
+  @@index([wechatUnionId])
+  @@index([companyId])
+}
+
+model Company {
+  id              String   @id @default(cuid())
+  name            String
+  wechatAppId     String?  @unique
+  wechatSecretKey String?  @unique
+  enterpriseId    String?
+  agentSecretKey  String?
+  modelConfig      Json?
+  companyId       String?  @unique
+  users           User[]
+  conversations  Conversation[]
+  messages        Message[]
+  replies         Reply[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([wechatAppId])
+}
+
+model Conversation {
+  id              String   @id @default(cuid())
+  userId          String?
+  user            User?     @relation(fields: [userId])
+  companyId       String?
+  company         Company?  @relation(fields: [companyId])
+  sessionId       String   @unique
+  source          MessageSource
+  messages        Message[]
+  replySettings  Json?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([companyId])
+  @@index([isActive])
+}
+
+model Message {
+  id              String       @id @default(cuid())
+  sessionId      String       @unique
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId])
+  userId          String?
+  user            User?        @relation(fields: [userId])
+  companyId       String?
+  company         Company?      @relation(fields: [companyId])
+  source          MessageSource
+  openId          String?      // 微信OpenID
+  unionId         String?      // 企业微信UserID
+  mpOpenId        String?      // 小程序OpenID
+
+  // 消息内容
+  type            String       // text, image, voice, video, location, link
+  content         String       // 文本消息内容
+  mediaUrl        String?      // 媒体消息URL
+  mediaId         String?      // 微信媒体ID
+  voiceUrl        String?      // 语音消息URL
+  voiceDuration   Int?
+  location        Json?
+  linkUrl         String?
+  linkTitle       String?
+  linkDesc        String?
+  linkThumbUrl    String?
+
+  // 处理状态
+  status          MessageStatus @default(PENDING)
+  statusMessage   String?
+  processedAt     DateTime?
+  replyType       ReplyType   @default(AUTO_REPLY)
+
+  // AI分析结果
+  intent          String?      // 意图
+  confidence      Float?       // 置信度
+  category        String?      // 分类
+  priority        Int?         @default(0)
+
+  // 时间戳
+  createTime      DateTime?     // 微信消息的创建时间
+  serverTime      DateTime     @default(now())
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  replies         Reply[]
+  auditLogs       AuditLog[]
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([companyId])
+  @@index([status])
+  @@index([createTime])
+  @@index([priority])
+}
+
+model Reply {
+  id              String   @id @default(cuid())
+  messageId       String
+  message         Message  @relation(fields: [messageId])
+  content         String   // 回复内容
+  type            ReplyType @default(AUTO_REPLY)
+
+  // AI模型信息
+  modelProvider   String   // openai, anthropic, coze, qwen, wenxin
+  modelName       String?  // 模型名称
+  modelVersion    String?  // 模型版本
+
+  // 元数据
+  promptTokens    Int?
+  completionTokens Int?
+  latencyMs       Int?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([messageId])
+}
+
+model Agent {
+  id              String   @id @default(cuid())
+  companyId       String?
+  company         Company?  @relation(fields: [companyId])
+  name            String
+  description     String?
+
+  // Agent配置
+  type            String   // customer_service, sales, technical
+  modelProvider   String   // 使用的模型提供商
+  modelName       String?  // 模型名称
+  systemPrompt     String?  // 系统提示词
+  isActive        Boolean  @default(true)
+
+  // 业务配置
+  productInfo     Json?
+  faqDocuments    Json?   // FAQ文档
+  knowledgeBase   Json?   // 知识库
+  escalationRules Json?   // 转人工规则
+
+  // 性能指标
+  totalReplies    Int      @default(0)
+  avgResponseTime Float    @default(0)
+  avgTokens       Float    @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([isActive])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  messageId   String
+  message     Message  @relation(fields: [messageId])
+  level       String   // info, warn, error
+  category    String   // content, model, system, security
+  message     String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([messageId])
+  @@index([level])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model MessageTemplate {
+  id          String   @id @default(cuid())
+  companyId   String?
+  company     Company?  @relation(fields: [companyId])
+  type        String   // greeting, farewell, faq, escalation, out_of_business
+  intent      String   // customer_service, sales, technical, etc
+  priority   Int      @default(0)
+  content     String   // 回复模板内容
+  variables   Json?    // 模板变量
+  isActive    Boolean   @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([intent])
+  @@index([isActive])
+}

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能网页爬虫 - 内容预览与下载</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .input-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .preview-section {
+            display: none;
+            gap: 20px;
+        }
+
+        .preview-section.active {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+        }
+
+        @media (max-width: 1024px) {
+            .preview-section.active {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .content-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .selection-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .article-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .article-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .article-content {
+            line-height: 1.8;
+            color: #374151;
+            margin-bottom: 30px;
+        }
+
+        .article-content p {
+            margin-bottom: 16px;
+            text-indent: 2em;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 30px 0 16px;
+            padding-left: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .image-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            background: #f3f4f6;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .image-item img:hover {
+            transform: scale(1.05);
+        }
+
+        .image-checkbox {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .comment-item {
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .comment-username {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .comment-content {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .selection-group {
+            margin-bottom: 20px;
+        }
+
+        .selection-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .selection-group-title input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .selection-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .selection-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 4px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+        }
+
+        .selection-item:last-child {
+            border-bottom: none;
+        }
+
+        .selection-item:hover {
+            background: #f9fafb;
+        }
+
+        .selection-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .selection-item label {
+            flex: 1;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .selection-item-preview {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .selection-summary {
+            padding: 12px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .selection-summary p {
+            font-size: 13px;
+            color: #166534;
+            margin: 4px 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 16px;
+            color: #d1d5db;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state small {
+            font-size: 13px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #667eea;
+            color: white;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🕷️ 智能网页爬虫</h1>
+            <p>预览网页内容，选择性下载标题、正文、图片、评论</p>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="input-section">
+            <div class="input-group">
+                <input
+                    type="url"
+                    id="urlInput"
+                    placeholder="请输入网页URL，例如：https://example.com/article"
+                >
+                <button id="previewBtn" class="btn btn-primary">
+                    <span id="previewBtnText">🔍 预览内容</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 错误提示 -->
+        <div id="alertContainer"></div>
+
+        <!-- 预览区域 -->
+        <div id="previewSection" class="preview-section">
+            <!-- 左侧内容预览 -->
+            <div class="content-panel">
+                <!-- 空状态 -->
+                <div id="emptyState" class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p>输入URL并点击"预览内容"按钮</p>
+                    <small>支持预览标题、正文、图片、评论</small>
+                </div>
+
+                <!-- 内容展示 -->
+                <div id="contentDisplay" style="display: none;">
+                    <h2 id="articleTitle" class="article-title"></h2>
+                    <div class="article-meta">
+                        <div class="article-meta-item">
+                            <span>📊 图片:</span>
+                            <span id="imageCount" class="badge">0</span>
+                        </div>
+                        <div class="article-meta-item">
+                            <span>💬 评论:</span>
+                            <span id="commentCount" class="badge">0</span>
+                        </div>
+                        <div class="article-meta-item">
+                            <span>📝 正文字数:</span>
+                            <span id="contentLength">0</span>
+                        </div>
+                    </div>
+
+                    <!-- 正文内容 -->
+                    <div class="section-title">📄 正文内容</div>
+                    <div id="articleContent" class="article-content"></div>
+
+                    <!-- 图片列表 -->
+                    <div id="imagesSection" style="display: none;">
+                        <div class="section-title">🖼️ 图片列表</div>
+                        <div id="imagesGrid" class="images-grid"></div>
+                    </div>
+
+                    <!-- 评论列表 -->
+                    <div id="commentsSection" style="display: none;">
+                        <div class="section-title">💬 评论列表</div>
+                        <div id="commentsList" class="comments-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧选择面板 -->
+            <div class="selection-panel">
+                <div class="panel-title">🎯 选择要下载的内容</div>
+
+                <!-- 选择摘要 -->
+                <div id="selectionSummary" class="selection-summary" style="display: none;">
+                    <p><strong>已选择:</strong></p>
+                    <p>标题: <span id="selectedTitle">否</span></p>
+                    <p>正文: <span id="selectedContent">否</span></p>
+                    <p>图片: <span id="selectedImages">0</span> 张</p>
+                    <p>评论: <span id="selectedComments">0</span> 条</p>
+                </div>
+
+                <!-- 标题选择 -->
+                <div class="selection-group">
+                    <div class="selection-group-title">
+                        <input type="checkbox" id="selectTitle">
+                        <label for="selectTitle">下载标题</label>
+                    </div>
+                </div>
+
+                <!-- 正文选择 -->
+                <div class="selection-group">
+                    <div class="selection-group-title">
+                        <input type="checkbox" id="selectContent">
+                        <label for="selectContent">下载正文</label>
+                    </div>
+                </div>
+
+                <!-- 图片选择 -->
+                <div class="selection-group" id="imagesSelectionGroup" style="display: none;">
+                    <div class="selection-group-title">
+                        <input type="checkbox" id="selectAllImages">
+                        <label for="selectAllImages">下载图片 (<span id="imagesSelectionCount">0</span>)</label>
+                    </div>
+                    <div id="imagesSelectionList" class="selection-list"></div>
+                </div>
+
+                <!-- 评论选择 -->
+                <div class="selection-group" id="commentsSelectionGroup" style="display: none;">
+                    <div class="selection-group-title">
+                        <input type="checkbox" id="selectAllComments">
+                        <label for="selectAllComments">下载评论 (<span id="commentsSelectionCount">0</span>)</label>
+                    </div>
+                    <div id="commentsSelectionList" class="selection-list"></div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="action-buttons">
+                    <button id="downloadBtn" class="btn btn-success" disabled>
+                        <span id="downloadBtnText">⬇️ 开始下载</span>
+                    </button>
+                    <button id="clearBtn" class="btn btn-secondary">
+                        🗑️ 清除内容
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局状态
+        let currentData = null;
+        let selectedImages = new Set();
+        let selectedComments = new Set();
+
+        // DOM 元素
+        const urlInput = document.getElementById('urlInput');
+        const previewBtn = document.getElementById('previewBtn');
+        const previewBtnText = document.getElementById('previewBtnText');
+        const previewSection = document.getElementById('previewSection');
+        const emptyState = document.getElementById('emptyState');
+        const contentDisplay = document.getElementById('contentDisplay');
+
+        // 从localStorage加载之前预览的URL
+        window.addEventListener('load', () => {
+            const savedUrl = localStorage.getItem('previewUrl');
+            if (savedUrl) {
+                urlInput.value = savedUrl;
+                // 自动触发预览
+                setTimeout(() => {
+                    previewBtn.click();
+                }, 500);
+            }
+        });
+
+        // 预览内容
+        previewBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                showAlert('请输入URL', 'error');
+                return;
+            }
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                showAlert('请输入有效的URL（以 http:// 或 https:// 开头）', 'error');
+                return;
+            }
+
+            // 显示加载状态
+            previewBtn.disabled = true;
+            previewBtnText.innerHTML = '<span class="loading"></span> 预览中...';
+
+            try {
+                const response = await fetch('/api/content/preview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    currentData = result.data;
+                    displayContent(currentData);
+                    showAlert('预览成功！', 'success');
+                } else {
+                    showAlert(result.message || '预览失败', 'error');
+                }
+            } catch (error) {
+                showAlert('网络错误，请重试', 'error');
+            } finally {
+                previewBtn.disabled = false;
+                previewBtnText.textContent = '🔍 预览内容';
+            }
+        });
+
+        // 显示内容
+        function displayContent(data) {
+            // 显示预览区域
+            previewSection.classList.add('active');
+            emptyState.style.display = 'none';
+            contentDisplay.style.display = 'block';
+
+            // 设置标题
+            document.getElementById('articleTitle').textContent = data.title || '无标题';
+
+            // 设置元数据
+            document.getElementById('imageCount').textContent = data.meta.image_count;
+            document.getElementById('commentCount').textContent = data.meta.comment_count;
+            document.getElementById('contentLength').textContent = data.meta.content_length;
+
+            // 设置正文
+            const contentDiv = document.getElementById('articleContent');
+            if (data.content) {
+                contentDiv.innerHTML = data.content.split('\n\n').map(p => `<p>${p}</p>`).join('');
+            } else {
+                contentDiv.innerHTML = '<p style="color: #999;">未提取到正文内容</p>';
+            }
+
+            // 显示图片
+            const imagesSection = document.getElementById('imagesSection');
+            const imagesGrid = document.getElementById('imagesGrid');
+            if (data.images && data.images.length > 0) {
+                imagesSection.style.display = 'block';
+                imagesGrid.innerHTML = data.images.map(img => `
+                    <div class="image-item">
+                        <input type="checkbox" class="image-checkbox" data-id="${img.id}" ${img.selected ? 'checked' : ''}>
+                        <img src="${img.url}" alt="${img.alt || ''}" onclick="window.open('${img.url}', '_blank')">
+                    </div>
+                `).join('');
+
+                // 添加图片选择事件
+                document.querySelectorAll('.image-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => {
+                        const id = parseInt(e.target.dataset.id);
+                        if (e.target.checked) {
+                            selectedImages.add(id);
+                        } else {
+                            selectedImages.delete(id);
+                        }
+                        updateSelectionSummary();
+                        updateImagesSelectionList();
+                    });
+                });
+
+                // 显示图片选择组
+                document.getElementById('imagesSelectionGroup').style.display = 'block';
+                document.getElementById('imagesSelectionCount').textContent = data.images.length;
+                updateImagesSelectionList();
+            } else {
+                imagesSection.style.display = 'none';
+                document.getElementById('imagesSelectionGroup').style.display = 'none';
+            }
+
+            // 显示评论
+            const commentsSection = document.getElementById('commentsSection');
+            const commentsList = document.getElementById('commentsList');
+            if (data.comments && data.comments.length > 0) {
+                commentsSection.style.display = 'block';
+                commentsList.innerHTML = data.comments.map(comment => `
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-username">${comment.username}</span>
+                            ${comment.time ? `<span class="comment-time">${comment.time}</span>` : ''}
+                        </div>
+                        <div class="comment-content">${comment.content}</div>
+                    </div>
+                `).join('');
+
+                // 显示评论选择组
+                document.getElementById('commentsSelectionGroup').style.display = 'block';
+                document.getElementById('commentsSelectionCount').textContent = data.comments.length;
+                updateCommentsSelectionList(data.comments);
+            } else {
+                commentsSection.style.display = 'none';
+                document.getElementById('commentsSelectionGroup').style.display = 'none';
+            }
+
+            // 更新下载按钮状态
+            updateDownloadButton();
+
+            // 滚动到预览区域
+            previewSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 更新图片选择列表
+        function updateImagesSelectionList() {
+            if (!currentData || !currentData.images) return;
+
+            const list = document.getElementById('imagesSelectionList');
+            list.innerHTML = currentData.images.map(img => `
+                <div class="selection-item">
+                    <input type="checkbox" id="imgSel${img.id}" data-id="${img.id}" ${selectedImages.has(img.id) ? 'checked' : ''}>
+                    <img src="${img.url}" class="selection-item-preview" alt="">
+                    <label for="imgSel${img.id}">图片 ${img.id}</label>
+                </div>
+            `).join('');
+
+            // 添加事件监听
+            list.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    if (e.target.checked) {
+                        selectedImages.add(id);
+                    } else {
+                        selectedImages.delete(id);
+                    }
+                    updateSelectionSummary();
+                    updateDownloadButton();
+
+                    // 同步更新图片网格中的复选框
+                    const gridCheckbox = document.querySelector(`.image-checkbox[data-id="${id}"]`);
+                    if (gridCheckbox) {
+                        gridCheckbox.checked = e.target.checked;
+                    }
+                });
+            });
+        }
+
+        // 更新评论选择列表
+        function updateCommentsSelectionList(comments) {
+            const list = document.getElementById('commentsSelectionList');
+            list.innerHTML = comments.map(comment => `
+                <div class="selection-item">
+                    <input type="checkbox" id="commentSel${comment.id}" data-id="${comment.id}">
+                    <label for="commentSel${comment.id}">${comment.username}: ${comment.content.substring(0, 50)}...</label>
+                </div>
+            `).join('');
+
+            // 添加事件监听
+            list.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    if (e.target.checked) {
+                        selectedComments.add(id);
+                    } else {
+                        selectedComments.delete(id);
+                    }
+                    updateSelectionSummary();
+                    updateDownloadButton();
+                });
+            });
+        }
+
+        // 全选图片
+        document.getElementById('selectAllImages').addEventListener('change', (e) => {
+            if (!currentData || !currentData.images) return;
+
+            const checked = e.target.checked;
+            currentData.images.forEach(img => {
+                if (checked) {
+                    selectedImages.add(img.id);
+                } else {
+                    selectedImages.delete(img.id);
+                }
+            });
+
+            // 更新所有复选框
+            document.querySelectorAll('.image-checkbox, #imagesSelectionList input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = checked;
+            });
+
+            updateSelectionSummary();
+            updateDownloadButton();
+        });
+
+        // 全选评论
+        document.getElementById('selectAllComments').addEventListener('change', (e) => {
+            if (!currentData || !currentData.comments) return;
+
+            const checked = e.target.checked;
+            currentData.comments.forEach(comment => {
+                if (checked) {
+                    selectedComments.add(comment.id);
+                } else {
+                    selectedComments.delete(comment.id);
+                }
+            });
+
+            // 更新所有复选框
+            document.querySelectorAll('#commentsSelectionList input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = checked;
+            });
+
+            updateSelectionSummary();
+            updateDownloadButton();
+        });
+
+        // 标题选择
+        document.getElementById('selectTitle').addEventListener('change', updateSelectionSummary);
+
+        // 正文选择
+        document.getElementById('selectContent').addEventListener('change', updateSelectionSummary);
+
+        // 更新选择摘要
+        function updateSelectionSummary() {
+            const titleSelected = document.getElementById('selectTitle').checked;
+            const contentSelected = document.getElementById('selectContent').checked;
+
+            document.getElementById('selectedTitle').textContent = titleSelected ? '是' : '否';
+            document.getElementById('selectedContent').textContent = contentSelected ? '是' : '否';
+            document.getElementById('selectedImages').textContent = selectedImages.size;
+            document.getElementById('selectedComments').textContent = selectedComments.size;
+
+            // 显示摘要
+            document.getElementById('selectionSummary').style.display = 'block';
+
+            updateDownloadButton();
+        }
+
+        // 更新下载按钮状态
+        function updateDownloadButton() {
+            const titleSelected = document.getElementById('selectTitle').checked;
+            const contentSelected = document.getElementById('selectContent').checked;
+            const hasImages = selectedImages.size > 0;
+            const hasComments = selectedComments.size > 0;
+
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.disabled = !(titleSelected || contentSelected || hasImages || hasComments);
+        }
+
+        // 下载
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            const selection = {
+                title: document.getElementById('selectTitle').checked,
+                content: document.getElementById('selectContent').checked,
+                images: Array.from(selectedImages),
+                comments: Array.from(selectedComments)
+            };
+
+            const downloadBtn = document.getElementById('downloadBtn');
+            const downloadBtnText = document.getElementById('downloadBtnText');
+
+            // 显示加载状态
+            downloadBtn.disabled = true;
+            downloadBtnText.innerHTML = '<span class="loading"></span> 下载中...';
+
+            try {
+                const response = await fetch('/api/content/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ selection })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert(result.message, 'success');
+                } else {
+                    showAlert(result.message || '下载失败', 'error');
+                }
+            } catch (error) {
+                showAlert('网络错误，请重试', 'error');
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtnText.textContent = '⬇️ 开始下载';
+                updateDownloadButton();
+            }
+        });
+
+        // 清除内容
+        document.getElementById('clearBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/content/clear', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    // 清除UI
+                    currentData = null;
+                    selectedImages.clear();
+                    selectedComments.clear();
+                    urlInput.value = '';
+                    previewSection.classList.remove('active');
+                    contentDisplay.style.display = 'none';
+                    emptyState.style.display = 'block';
+
+                    // 重置选择
+                    document.getElementById('selectTitle').checked = false;
+                    document.getElementById('selectContent').checked = false;
+                    document.getElementById('selectAllImages').checked = false;
+                    document.getElementById('selectAllComments').checked = false;
+
+                    // 隐藏选择摘要
+                    document.getElementById('selectionSummary').style.display = 'none';
+
+                    showAlert('已清除内容', 'success');
+                }
+            } catch (error) {
+                showAlert('清除失败', 'error');
+            }
+        });
+
+        // 显示提示
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

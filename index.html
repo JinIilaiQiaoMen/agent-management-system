@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAEP 三省六部 - 下载中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white/80 backdrop-blur-sm dark:bg-slate-900/80 border-b dark:border-slate-800">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl">
+                        🏛️
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100">
+                            ZAEP 三省六部
+                        </h1>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            智元企业AI中台
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="https://github.com/yourusername/zaep" target="_blank" class="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="mailto:support@zaep.com" class="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100">
+                        <i class="fas fa-envelope text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="container mx-auto px-4 py-12">
+        <!-- Hero Section -->
+        <div class="text-center mb-16 fade-in">
+            <div class="inline-flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-4xl mb-6 float">
+                🏛️
+            </div>
+            <h1 class="text-5xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                ZAEP 三省六部 <span class="gradient-text">下载中心</span>
+            </h1>
+            <p class="text-xl text-slate-600 dark:text-slate-400 mb-8">
+                完整的三省六部 + 商业化SaaS平台
+            </p>
+            <div class="flex items-center justify-center gap-4 mb-8">
+                <span class="px-4 py-2 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 rounded-full text-sm font-medium">
+                    完整系统
+                </span>
+                <span class="px-4 py-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 rounded-full text-sm font-medium">
+                    商业化
+                </span>
+                <span class="px-4 py-2 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100 rounded-full text-sm font-medium">
+                    可部署
+                </span>
+            </div>
+        </div>
+
+        <!-- 下载选项 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+            <!-- 源码下载 -->
+            <div class="card-hover bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="h-12 w-12 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-100 flex items-center justify-center">
+                        <i class="fas fa-code text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">
+                            源码下载
+                        </h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            完整源代码
+                        </p>
+                    </div>
+                </div>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
+                        <span>文件大小:</span>
+                        <span class="font-medium text-slate-900 dark:text-slate-100">
+                            ~150 MB
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
+                        <span>代码行数:</span>
+                        <span class="font-medium text-slate-900 dark:text-slate-100">
+                            ~300,000+
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
+                        <span>包含文件:</span>
+                        <span class="font-medium text-slate-900 dark:text-slate-100">
+                            56个
+                        </span>
+                    </div>
+                </div>
+                <a href="#" class="block w-full py-3 px-6 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium text-center transition-colors">
+                    <i class="fas fa-download mr-2"></i>
+                    下载源代码
+                </a>
+            </div>
+
+            <!-- Docker镜像 -->
+            <div class="card-hover bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="h-12 w-12 rounded-lg bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-100 flex items-center justify-center">
+                        <i class="fab fa-docker text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">
+                            Docker镜像
+                        </h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            容器化部署
+                        </p>
+                    </div>
+                </div>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
+                        <span>镜像大小:</span>
+                        <span class="font-medium text-slate-900 dark:text-slate-100">
+                            ~500 MB
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
+                        <span>运行时:</span>
+                        <span class="font-medium text-slate-900 dark:text-slate-100">
+                            Node.js 20
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
+                        <span>包含服务:</span>
+                        <span class="font-medium text-slate-900 dark:text-slate-100">
+                            PostgreSQL, Redis
+                        </span>
+                    </div>
+                </div>
+                <a href="#" class="block w-full py-3 px-6 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium text-center transition-colors">
+                    <i class="fas fa-box mr-2"></i>
+                    拉取Docker镜像
+                </a>
+            </div>
+
+            <!-- 一键部署 -->
+            <div class="card-hover bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="h-12 w-12 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-100 flex items-center justify-center">
+                        <i class="fas fa-rocket text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">
+                            一键部署
+                        </h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            快速部署脚本
+                        </p>
+                    </div>
+                </div>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
+                        <span>支持平台:</span>
+                        <span class="font-medium text-slate-900 dark:text-slate-100">
+                            Linux, macOS, Windows
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
+                        <span>部署时间:</span>
+                        <span class="font-medium text-slate-900 dark:text-slate-100">
+                            ~5分钟
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm text-slate-600 dark:text-slate-400">
+                        <span>环境要求:</span>
+                        <span class="font-medium text-slate-900 dark:text-slate-100">
+                            Docker, Make
+                        </span>
+                    </div>
+                </div>
+                <a href="#" class="block w-full py-3 px-6 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium text-center transition-colors">
+                    <i class="fas fa-download mr-2"></i>
+                    获取部署脚本
+                </a>
+            </div>
+        </div>
+
+        <!-- 功能特性 -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg mb-12">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+                <i class="fas fa-star text-yellow-500 mr-2"></i>
+                核心功能
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="h-12 w-12 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-100 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-brain text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                        中书省
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        智能决策草拟
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="h-12 w-12 rounded-lg bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-100 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-shield-alt text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                        门下省
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        审核封驳
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="h-12 w-12 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-100 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-building text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                        尚书省
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        任务执行
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="h-12 w-12 rounded-lg bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-100 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-users text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                        六部
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        业务执行
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="h-12 w-12 rounded-lg bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-100 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-user-secret text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                        锦衣卫
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        监控审计
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="h-12 w-12 rounded-lg bg-cyan-100 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-100 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-credit-card text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                        商业化
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        SaaS订阅
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="h-12 w-12 rounded-lg bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-100 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-paint-brush text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                        现代UI
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        响应式界面
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="h-12 w-12 rounded-lg bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-100 flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-server text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                        可部署
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Docker一键部署
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 快速开始 -->
+        <div class="bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-900 dark:to-purple-900 rounded-2xl p-8 shadow-lg text-white mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-center">
+                <i class="fas fa-bolt mr-2"></i>
+                5分钟快速开始
+            </h2>
+            <div class="space-y-6">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-white/20 text-white flex items-center justify-center font-bold">
+                        1
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold mb-2">
+                            下载源代码
+                        </h3>
+                        <p class="text-white/80">
+                            点击上方"下载源代码"按钮，获取完整项目文件
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-white/20 text-white flex items-center justify-center font-bold">
+                        2
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold mb-2">
+                            配置环境
+                        </h3>
+                        <p class="text-white/80">
+                            复制 .env.example 到 .env.local，填入数据库和其他配置
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-white/20 text-white flex items-center justify-center font-bold">
+                        3
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold mb-2">
+                            运行部署
+                        </h3>
+                        <p class="text-white/80">
+                            执行 ./deploy.sh 或 docker-compose up -d 启动服务
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 h-8 w-8 rounded-full bg-white/20 text-white flex items-center justify-center font-bold">
+                        4
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold mb-2">
+                            访问应用
+                        </h3>
+                        <p class="text-white/80">
+                            浏览器访问 http://localhost:3000 开始使用
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术栈 -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg mb-12">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+                <i class="fas fa-microchip text-blue-500 mr-2"></i>
+                技术栈
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <img src="https://img.shields.io/badge/Next.js-14-black.svg?logo=react" alt="Next.js" class="h-6" />
+                </div>
+                <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <img src="https://img.shields.io/badge/TypeScript-5.0-blue.svg" alt="TypeScript" class="h-6" />
+                </div>
+                <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2FF.svg?logo=tailwindcss" alt="Tailwind" class="h-6" />
+                </div>
+                <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <img src="https://img.shields.io/badge/Prisma-5.6-2D37A1.svg?logo=prisma" alt="Prisma" class="h-6" />
+                </div>
+                <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <img src="https://img.shields.io/badge/PostgreSQL-15-336791.svg?logo=postgresql" alt="PostgreSQL" class="h-6" />
+                </div>
+                <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <img src="https://img.shields.io/badge/Redis-7.2-DC382D.svg?logo=redis" alt="Redis" class="h-6" />
+                </div>
+                <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <img src="https://img.shields.io/badge/Docker-2496ED.svg?logo=docker" alt="Docker" class="h-6" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 文档链接 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg">
+                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                    <i class="fas fa-book text-blue-500 mr-2"></i>
+                    文档中心
+                </h3>
+                <div class="space-y-3">
+                    <a href="#" class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-file-code text-slate-600 dark:text-slate-400"></i>
+                        <span class="text-slate-900 dark:text-slate-100">API文档</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-book text-slate-600 dark:text-slate-400"></i>
+                        <span class="text-slate-900 dark:text-slate-100">开发指南</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-rocket text-slate-600 dark:text-slate-400"></i>
+                        <span class="text-slate-900 dark:text-slate-100">部署指南</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg">
+                <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                    <i class="fas fa-question-circle text-green-500 mr-2"></i>
+                    支持
+                </h3>
+                <div class="space-y-3">
+                    <a href="mailto:support@zaep.com" class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-envelope text-slate-600 dark:text-slate-400"></i>
+                        <span class="text-slate-900 dark:text-slate-100">邮件支持</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-comments text-slate-600 dark:text-slate-400"></i>
+                        <span class="text-slate-900 dark:text-slate-100">在线客服</span>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-users text-slate-600 dark:text-slate-400"></i>
+                        <span class="text-slate-900 dark:text-slate-100">社区论坛</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 定价 -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg mb-12">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6 text-center">
+                <i class="fas fa-tags text-purple-500 mr-2"></i>
+                套餐定价
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 基础版 -->
+                <div class="border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6">
+                    <div class="text-center mb-4">
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                            基础版
+                        </h3>
+                        <div class="text-4xl font-bold text-blue-600 dark:text-blue-400 my-2">
+                            ¥9,999
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            月付
+                        </p>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span class="text-slate-700 dark:text-slate-300 text-sm">基础三省六部系统</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span class="text-slate-700 dark:text-slate-300 text-sm">5个并发用户</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span class="text-slate-700 dark:text-slate-300 text-sm">10万次API调用/月</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="block w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-center font-medium transition-colors">
+                        选择基础版
+                    </a>
+                </div>
+
+                <!-- 专业版 -->
+                <div class="border-2 border-purple-200 dark:border-purple-800 rounded-2xl p-6">
+                    <div class="text-center mb-4">
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                            专业版
+                        </h3>
+                        <div class="text-4xl font-bold text-purple-600 dark:text-purple-400 my-2">
+                            ¥29,999
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            月付
+                        </p>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span class="text-slate-700 dark:text-slate-300 text-sm">完整三省六部系统</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span class="text-slate-700 dark:text-slate-300 text-sm">20个并发用户</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span class="text-slate-700 dark:text-slate-300 text-sm">100万次API调用/月</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="block w-full py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-center font-medium transition-colors">
+                        选择专业版
+                    </a>
+                </div>
+
+                <!-- 企业版 -->
+                <div class="border-2 border-orange-200 dark:border-orange-800 rounded-2xl p-6">
+                    <div class="text-center mb-4">
+                        <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                            企业版
+                        </h3>
+                        <div class="text-4xl font-bold text-orange-600 dark:text-orange-400 my-2">
+                            ¥99,999
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            月付
+                        </p>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span class="text-slate-700 dark:text-slate-300 text-sm">无限并发用户</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span class="text-slate-700 dark:text-slate-300 text-sm">无限API调用</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-green-500"></i>
+                            <span class="text-slate-700 dark:text-slate-300 text-sm">私有化部署</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="block w-full py-2 px-4 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-center font-medium transition-colors">
+                        选择企业版
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <footer class="border-t dark:border-slate-800 mt-12">
+            <div class="container mx-auto px-4 py-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center">
+                                🏛️
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 dark:text-slate-100">
+                                    ZAEP 三省六部
+                                </h4>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">
+                                    智元企业AI中台
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            将古代三省六部制度与现代AI技术结合，提供智能化的决策、审核、执行、监控流程。
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-slate-100 mb-4">
+                            快速链接
+                        </h4>
+                        <ul class="space-y-2">
+                            <li>
+                                <a href="#" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                                    技术文档
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                                    API文档
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                                    部署指南
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                                    常见问题
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900 dark:text-slate-100 mb-4">
+                            联系我们
+                        </h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-envelope text-slate-600 dark:text-slate-400"></i>
+                                <a href="mailto:support@zaep.com" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                                    support@zaep.com
+                                </a>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-phone text-slate-600 dark:text-slate-400"></i>
+                                <a href="tel:+864008888888" class="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100">
+                                    +86 400-888-8888
+                                </a>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fab fa-weixin text-slate-600 dark:text-slate-400"></i>
+                                <span class="text-sm text-slate-600 dark:text-slate-400">
+                                    ZAEP_Support
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t dark:border-slate-800 mt-8 pt-8 text-center">
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        © 2026 ZAEP 三省六部. 保留所有权利.
+                    </p>
+                    <div class="flex items-center justify-center gap-4 mt-4 text-xs text-slate-600 dark:text-slate-400">
+                        <a href="#" class="hover:text-slate-900 dark:hover:text-slate-100">
+                            隐私政策
+                        </a>
+                        <span>·</span>
+                        <a href="#" class="hover:text-slate-900 dark:hover:text-slate-100">
+                            服务条款
+                        </a>
+                        <span>·</span>
+                        <a href="#" class="hover:text-slate-900 dark:hover:text-slate-100">
+                            使用协议
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // 模拟下载功能
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // 源码下载
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const text = this.textContent;
+                if (text.includes('下载源代码')) {
+                    e.preventDefault();
+                    alert('正在生成源代码压缩包...\n\n实际部署时，这里会直接从GitHub或云存储下载完整的源代码。');
+                    // 实际实现：
+                    // window.location.href = 'https://github.com/yourusername/zaep/archive/main.zip';
+                }
+            });
+        });
+
+        // 自动下载脚本
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js';
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

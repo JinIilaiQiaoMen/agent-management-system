@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智元企业AI中台 ZAEP - 项目概览</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #1f2937;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+        }
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f3f4f6;
+            margin-bottom: 0.5rem;
+        }
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .nav-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .nav-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .nav-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .nav-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #f3f4f6;
+        }
+        .progress-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 9999px;
+            height: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            transition: width 0.5s ease;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .status-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+        }
+        .status-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        .status-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+        .dev-server {
+            background: linear-gradient(135deg, #1f2937 0%, #6366f6 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .server-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 9999px;
+        }
+        .status-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        .status-dot.running {
+            background: #10b981;
+            animation: none;
+        }
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        .api-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .api-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .api-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .api-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+        .api-method {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-family: monospace;
+            margin-bottom: 1rem;
+        }
+        .api-url {
+            color: #1f2937;
+            word-break: break-all;
+            padding: 0.5rem;
+            background: rgba(31, 41, 55, 0.1);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="text-align: center;">
+                <h1 class="title">🎯 智元企业AI中台 ZAEP</h1>
+                <p style="font-size: 1rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    企业级AI智能化管理平台
+                </p>
+            </div>
+        </div>
+
+        <div class="nav-grid">
+            <a href="#business" class="nav-card">
+                <div class="nav-icon">🌍</div>
+                <div class="nav-title">外贸业务</div>
+            </a>
+            <a href="#enterprise" class="nav-card">
+                <div class="nav-icon">🏢</div>
+                <div class="nav-title">企业管理</div>
+            </a>
+            <a href="#marketing" class="nav-card">
+                <div class="nav-icon">📱</div>
+                <div class="nav-title">智能营销</div>
+            </a>
+            <a href="#agent" class="nav-card">
+                <div class="nav-icon">🤖</div>
+                <div class="nav-title">智能体管理</div>
+            </a>
+            <a href="#data" class="nav-card">
+                <div class="nav-icon">📊</div>
+                <div class="nav-title">数据获取</div>
+            </a>
+            <a href="#support" class="nav-card">
+                <div class="nav-icon">📚</div>
+                <div class="nav-title">支撑系统</div>
+            </a>
+            <a href="#ai-hub" class="nav-card">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-title">AI能力中台</div>
+            </a>
+            <a href="#settings" class="nav-card">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-title">系统设置</div>
+            </a>
+        </div>
+
+        <div class="progress-section">
+            <h2 style="font-size: 1.5rem; color: #f3f4f6; margin-bottom: 1rem; text-align: center;">📊 项目完成度</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 33%;"></div>
+            </div>
+            <p style="font-size: 1rem; color: rgba(255, 255, 255, 0.8); text-align: center; margin-top: 0.5rem;">
+                整合进度: 33% 已完成
+            </p>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-label">项目结构</div>
+                    <div class="status-value">✅ 100%</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">代码整合</div>
+                    <div class="status-value">✅ 100%</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">API开发</div>
+                    <div class="status-value">✅ 90%</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">页面重构</div>
+                    <div class="status-value">✅ 70%</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">功能测试</div>
+                    <div class="status-value">🔄 50%</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">部署上线</div>
+                    <div class="status-value">⏳ 待开始</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dev-server">
+            <div class="server-status">
+                <div class="status-dot running"></div>
+                <div style="font-size: 1rem; font-weight: 600; color: #10b981;">开发服务器</div>
+            </div>
+            <div style="font-size: 1.25rem; color: rgba(255, 255, 255, 0.8); margin-top: 1rem;">
+                <p style="margin-bottom: 0.5rem;">当前状态：<strong style="color: #10b981;">运行中</strong></p>
+                <p style="margin-bottom: 0.5rem;">
+                    <span class="api-url">http://localhost:8080</span>
+                </p>
+            </div>
+        </div>
+
+        <h2 id="business" style="font-size: 1.5rem; color: #f3f4f6; margin-bottom: 1rem;">🌍 外贸业务</h2>
+        <div class="api-links">
+            <div class="api-card">
+                <div class="api-title">客户背调</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/customer-analysis</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    对话式AI分析、流式响应
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">邮件生成</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/email-generator</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    多模板、双语支持
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">线索筛选</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/lead-scoring</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    AI评分、批量处理
+                </p>
+            </div>
+        </div>
+
+        <h2 id="enterprise" style="font-size: 1.5rem; color: #f3f4f6; margin-bottom: 1rem;">🏢 企业管理</h2>
+        <div class="api-links">
+            <div class="api-card">
+                <div class="api-title">组织管理</div>
+                <div class="api-method">GET / POST / PUT</div>
+                <span class="api-url">/api/organization</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    部门/岗位/员工管理
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">智能招聘</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/recruitment</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    简历解析/面试/Offer
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">考勤系统</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/attendance</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    打卡/请假/加班
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">薪资管理</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/salary</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    工资单/发放记录
+                </p>
+            </div>
+        </div>
+
+        <h2 id="marketing" style="font-size: 1.5rem; color: #f3f4f6; margin-bottom: 1rem;">📱 智能营销</h2>
+        <div class="api-links">
+            <div class="api-card">
+                <div class="api-title">供应链智能</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/supply-chain</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    爆品预测/库存/品控
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">全渠道发布</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/domestic-platforms</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    30+平台/一键发布
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">线下赋能</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/offline-channels</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    客流/排班/巡店
+                </p>
+            </div>
+        </div>
+
+        <h2 id="agent" style="font-size: 1.5rem; color: #f3f4f6; margin-bottom: 1rem;">🤖 智能体管理</h2>
+        <div class="api-links">
+            <div class="api-card">
+                <div class="api-title">Agent配置</div>
+                <div class="api-method">GET / POST / PUT / DELETE</div>
+                <span class="api-url">/api/agents</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    配置/调试AI Agent
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">任务中心</div>
+                <div class="api-method">GET / POST / PATCH</div>
+                <span class="api-url">/api/tasks</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    创建/分配/追踪/完成任务
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">对话管理</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/conversations</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    多Agent/会话历史
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">OpenClaw调度</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/openclaw</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    定时任务/工作流编排
+                </p>
+            </div>
+        </div>
+
+        <h2 id="data" style="font-size: 1.5rem; color: #f3f4f6; margin-bottom: 1rem;">📊 数据获取</h2>
+        <div class="api-links">
+            <div class="api-card">
+                <div class="api-title">数据采集</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/crawler</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    智能爬虫、可视化配置
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">批量采集</div>
+                <div class="api-method">POST</div>
+                <span class="api-url">/api/crawler/batch</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    20+格式、反爬
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">内容提取</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/crawler/extract</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    文章/图片/视频
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">高级爬虫</div>
+                <div class="api-method">POST</div>
+                <span class="api-url">/api/crawler/advanced</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    反反爬/动态页面
+                </p>
+            </div>
+        </div>
+
+        <h2 id="support" style="font-size: 1.5rem; color: #f3f4f6; margin-bottom: 1rem;">📚 支撑系统</h2>
+        <div class="api-links">
+            <div class="api-card">
+                <div class="api-title">知识库管理</div>
+                <div class="api-method">GET / POST / DELETE</div>
+                <span class="api-url">/api/knowledge-base</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    RAG/向量检索
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">系统监控</div>
+                <div class="api-method">GET</div>
+                <span class="api-url">/api/monitoring</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    性能/日志
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">数据治理</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/data-governance</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    API网关/数据模型
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">资产管理</div>
+                <div class="api-method">GET / POST / PUT</div>
+                <span class="api-url">/api/assets</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    采购/入库/领用
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">合规审核</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/compliance</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    内容审核/风控
+                </p>
+            </div>
+        </div>
+
+        <h2 id="ai-hub" style="font-size: 1.5rem; color: #f3f4f6; margin-bottom: 1rem;">⚙️ AI能力中台</h2>
+        <div class="api-links">
+            <div class="api-card">
+                <div class="api-title">模型管理</div>
+                <div class="api-method">GET / POST / PUT</div>
+                <span class="api-url">/api/ai-hub/models</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    模型配置/切换/删除
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">路由配置</div>
+                <div class="api-method">GET / POST</div>
+                <span class="api-url">/api/ai-hub/rules</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    智能路由规则
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">用量统计</div>
+                <div class="api-method">GET</div>
+                <span class="api-url">/api/ai-hub/usage</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    调用次数/Token统计
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">成本分析</div>
+                <div class="api-method">GET</div>
+                <span class="api-url">/api/ai-hub/cost</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    优化建议/成本预测
+                </p>
+            </div>
+        </div>
+
+        <h2 id="settings" style="font-size: 1.5rem; color: #f3f4f6; margin-bottom: 1rem;">⚙️ 系统设置</h2>
+        <div class="api-links">
+            <div class="api-card">
+                <div class="api-title">个人中心</div>
+                <div class="api-method">GET / PUT</div>
+                <span class="api-url">/api/user/profile</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    个人信息/偏好设置
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">用户管理</div>
+                <div class="api-method">GET / POST / PUT / DELETE</div>
+                <span class="api-url">/api/users</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    用户管理/角色分配
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">角色权限</div>
+                <div class="api-method">GET / POST / PUT / DELETE</div>
+                <span class="api-url">/api/roles</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    角色配置/权限管理
+                </p>
+            </div>
+            <div class="api-card">
+                <div class="api-title">系统配置</div>
+                <div class="api-method">GET / PUT</div>
+                <span class="api-url">/api/system/config</span>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">
+                    系统参数/功能开关
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">
+                项目位置：<strong>/workspace/projects/workspace/zaep/projects/</strong><br>
+                开发服务器：<strong>http://localhost:8080</strong><br>
+                文档位置：<strong>/workspace/projects/workspace/zaep/docs/</strong>
+            </p>
+            <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.5);">
+                最后更新：2026-03-07 18:35<br>
+                版本：1.0.0<br>
+                状态：开发中 🔄
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 自动刷新状态
+        setInterval(() => {
+            const progressFills = document.querySelectorAll('.progress-fill');
+            progressFills.forEach(fill => {
+                const width = fill.style.width;
+                fill.style.width = (parseFloat(width) + Math.random() * 2) + '%';
+                setTimeout(() => {
+                    fill.style.width = width;
+                }, 500);
+            });
+        }, 5000);
+
+        // 模拟状态更新
+        function updateStatus() {
+            console.log('Status updated:', new Date().toLocaleTimeString());
+        }
+        
+        // 页面加载时更新一次
+        updateStatus();
+        
+        // 每5秒更新一次
+        setInterval(updateStatus, 5000);
+    </script>
+</body>
+</html>

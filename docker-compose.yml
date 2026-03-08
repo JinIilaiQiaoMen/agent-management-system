@@ -1,0 +1,132 @@
+version: '3.8'
+
+services:
+  # PostgreSQL数据库
+  postgres:
+    image: postgres:15-alpine
+    container_name: zaep-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-zaep}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zaep}
+      POSTGRES_DB: ${POSTGRES_DB:-zaep}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zaep}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - zaep-network
+    restart: unless-stopped
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: zaep-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-zaep}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-zaep}", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - zaep-network
+    restart: unless-stopped
+
+  # 应用服务
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_ENV: ${BUILD_ENV:-dev}
+    container_name: zaep-app
+    environment:
+      # 数据库
+      DATABASE_URL: postgresql://${POSTGRES_USER:-zaep}:${POSTGRES_PASSWORD:-zaep}@postgres:5432/${POSTGRES_DB:-zaep}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-zaep}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zaep}
+      POSTGRES_DB: ${POSTGRES_DB:-zaep}
+
+      # Redis
+      REDIS_URL: redis://:${REDIS_PASSWORD:-zaep}@redis:6379
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-zaep}
+
+      # NextAuth
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+
+      # Google OAuth
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+
+      # WeChat OAuth
+      WECHAT_APP_ID: ${WECHAT_APP_ID}
+      WECHAT_APP_SECRET: ${WECHAT_APP_SECRET}
+
+      # Stripe
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      NEXT_PUBLIC_STRIPE_PUBLIC_KEY: ${NEXT_PUBLIC_STRIPE_PUBLIC_KEY}
+
+      # Alipay
+      ALIPAY_APP_ID: ${ALIPAY_APP_ID}
+      ALIPAY_PRIVATE_KEY: ${ALIPAY_PRIVATE_KEY}
+
+      # 环境
+      NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - zaep-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "com.zaep.app"
+      - "com.zaep.env=${BUILD_ENV:-dev}"
+
+  # Nginx反向代理（可选）
+  nginx:
+    image: nginx:alpine
+    container_name: zaep-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - zaep-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  zaep-network:
+    driver: bridge

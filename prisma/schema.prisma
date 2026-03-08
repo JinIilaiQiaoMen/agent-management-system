@@ -1,0 +1,202 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+enum Plan {
+  BASIC
+  PROFESSIONAL
+  ULTIMATE
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+  INCOMPLETE
+}
+
+enum InvoiceStatus {
+  DRAFT
+  PENDING
+  PAID
+  VOID
+}
+
+enum PaymentMethod {
+  WECHAT
+  ALIPAY
+  STRIPE
+  PAYPAL
+  BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  phone         String?   @unique
+  image         String?
+  password      String?   // hashed
+  role          Role      @default(USER)
+  companyId     String?
+  company       Company?  @relation(fields: [companyId], references: [id])
+  subscription  Subscription?
+  invoices      Invoice[]
+  payments      Payment[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([email])
+  @@index([phone])
+  @@index([companyId])
+}
+
+model Company {
+  id            String        @id @default(cuid())
+  name          String
+  email         String        @unique
+  phone         String?
+  address       String?
+  taxId         String?
+  subscription  Subscription?
+  users         User[]
+  invoices      Invoice[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([email])
+}
+
+model Subscription {
+  id             String              @id @default(cuid())
+  userId         String?
+  user           User?               @relation(fields: [userId], references: [id])
+  companyId      String?
+  company        Company?            @relation(fields: [companyId], references: [id])
+  plan           Plan                @default(BASIC)
+  status         SubscriptionStatus  @default(TRIAL)
+  startDate      DateTime
+  endDate        DateTime
+  cancelAt       DateTime?
+  trialEndsAt    DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  invoices       Invoice[]
+  payments       Payment[]
+
+  @@index([userId])
+  @@index([companyId])
+  @@index([status])
+}
+
+model Invoice {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String?
+  amount         Decimal       @db.Decimal(10, 2)
+  currency       String        @default("CNY")
+  status         InvoiceStatus @default(DRAFT)
+  paidAt         DateTime?
+  dueDate        DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  payments       Payment[]
+
+  @@index([userId])
+  @@index([subscriptionId])
+  @@index([status])
+}
+
+model Payment {
+  id             String          @id @default(cuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id])
+  invoiceId      String?
+  invoice        Invoice?        @relation(fields: [invoiceId], references: [id])
+  subscriptionId String?
+  amount         Decimal         @db.Decimal(10, 2)
+  currency       String          @default("CNY")
+  method         PaymentMethod
+  status         PaymentStatus   @default(PENDING)
+  stripeId       String?
+  alipayId       String?
+  wechatId       String?
+  transactionId  String?
+  description     String?
+  metadata       Json?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([invoiceId])
+  @@index([subscriptionId])
+  @@index([status])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String  // "stripe" | "alipay" | "wechat"
+  providerAccountId String? // Stripe account ID
+  providerData     Json?
+  accessToken       String? @db.Text
+  refreshToken      String? @db.Text
+  expiresAt         DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([userId, type])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String?
+  expires      DateTime
+  user         User?    @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String
+  expires    DateTime
+  createdAt  DateTime @default(now())
+
+  @@unique([identifier, token])
+}

@@ -1,0 +1,73 @@
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Next.js
+.next
+out
+dist
+
+# Production
+build
+*.log
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+.DS_Store
+*.pem
+
+# Git
+.git
+.gitignore
+.github
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Scripts
+scripts
+*.sh
+
+# Documentation
+README.md
+docs
+
+# ComfyUI（如果单独部署）
+ComfyUI-Service
+public/comfyui-output
+
+# Logs
+logs
+*.log
+
+# Uploads
+uploads
+
+# Temp
+tmp
+temp
+*.tmp
+
+# OS
+Thumbs.db

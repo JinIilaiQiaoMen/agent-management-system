@@ -1,0 +1,158 @@
+# 公司智能体管理系统 - 一键部署配置
+# 完整商用化部署方案
+
+version: '3.8'
+
+services:
+  # ========== 核心应用 ==========
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: company-ai-agent
+    ports:
+      - "3000:3000"
+    environment:
+      # 数据库配置
+      - DATABASE_URL=postgresql://aiagent:aiagent123@postgres:5432/aiagent
+      
+      # OpenClaw集成配置
+      - OPENCLAW_BASE_URL=http://openclaw:5000
+      - OPENCLAW_API_KEY=${OPENCLAW_API_KEY:-}
+      
+      # Redis配置
+      - REDIS_URL=redis://redis:6379
+      
+      # S3存储配置
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_REGION=${AWS_REGION:-ap-east-1}
+      - S3_BUCKET=${S3_BUCKET:-ai-agent-assets}
+      
+      # AI API配置
+      - COZE_API_KEY=${COZE_API_KEY:-}
+      - COZE_WORKSPACE_ID=${COZE_WORKSPACE_ID:-}
+      
+      # 应用配置
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+    volumes:
+      - app-data:/app/.next
+      - uploads:/app/uploads
+    depends_on:
+      - postgres
+      - redis
+      - openclaw
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  # ========== OpenClaw网关 ==========
+  openclaw:
+    image: openclaw/openclaw:latest
+    container_name: openclaw-gateway
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - OPENCLAW_PORT=5000
+      - OPENCLAW_CONTROL_PORT=5001
+      - OPENCLAW_MODE=local
+      - OPENCLAW_AUTH_TOKEN=${OPENCLAW_API_KEY:-90291847-820c-4d52-b6c6-969f69bb18e9}
+    volumes:
+      - openclaw-data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  # ========== PostgreSQL数据库 ==========
+  postgres:
+    image: postgres:15-alpine
+    container_name: ai-agent-db
+    environment:
+      - POSTGRES_USER=aiagent
+      - POSTGRES_PASSWORD=aiagent123
+      - POSTGRES_DB=aiagent
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - ai-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aiagent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========== Redis缓存 ==========
+  redis:
+    image: redis:7-alpine
+    container_name: ai-agent-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - ai-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========== Nginx反向代理 ==========
+  nginx:
+    image: nginx:alpine
+    container_name: ai-agent-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+      - openclaw
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  # ========== Prometheus监控 ==========
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ai-agent-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+volumes:
+  app-data:
+  uploads:
+  openclaw-data:
+  postgres-data:
+  redis-data:
+  prometheus-data:
+
+networks:
+  ai-network:
+    driver: bridge
+
+# ========== 一键启动命令 ==========
+# docker-compose up -d
+#
+# 访问地址:
+#   - 应用: http://localhost
+#   - OpenClaw: http://localhost:5000
+#   - API监控: http://localhost:9090
+#
+# 首次配置:
+#   1. 访问 http://localhost 设置环境变量
+#   2. 配置OpenClaw连接 (API Key)
+#   3. 配置AI模型 (豆包API)
+#   4. 创建第一个智能体
